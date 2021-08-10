@@ -1,71 +1,161 @@
-# Getting Started with Create React App
+# React framework Note
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[Github](https://github.com/ClydeRM/React-practice-2021)
+##    Start Project
+```
+npx create-react-app <project name>
+```
 
-## Available Scripts
+##    專案檔案結構
+```
+.
+├── build // npm run build產生，是真正要發布的專案
+    
+├── public // index.html/Icon/圖案的資料夾
+    └── index.html // 根頁面/Title/Icon/引入CDN
+├── src 
+    ├── components // 頁面中的各區塊
+        ├── Header.js  
+        ├── Body.js 
+        ├── Footer.js 
+        ├── About.js 
+    ├── App.js // 程式進入點，設計Body的Layout/連接APi
+    ├── index.js // 初始檔案
+    ├── reportWebVitals.js // 初始檔案
+    └── index.css // 主要的客製化設計參數
+├── package.json
+├── package-lock.json
+├── yarn.lock
+```
 
-In the project directory, you can run:
+## PropTypes
 
-### `yarn start`
+component的屬性設定
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+import PropTypes from 'prop-types'
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Object.propTypes = {
+    Attribute1: PropTypes.string, // 一定要是string 
+    Attribute2: PropTypes.func, // 一定要是函式
+    Attribute3: PropTypes.string.isRequired, // 一定要給初值
+}
 
-### `yarn test`
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+##   useState, useEffect
+```
+import { useState, useEffect } from 'react'
 
-### `yarn build`
+//   [stateObject, stateFunction] = stateObject(初始值)
+const [showAddTask, setShowAddTask] = useState(false) 
+const [tasks, setTasks] = useState([ ])	
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+// useEffect(function, functionProps) 
+useEffect(() =>{ 
+    const getTasks = async() => { 
+        const taskFromServer = await fetchTasks()
+        setTasks(taskFromServer)
+    }
+    getTasks()
+}, [])
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+##    React html tag
+html tag
+* app.js 一定在 < div >中
+* className = class
+* < Header event={callFunction} />
+* < Route /> 需要import react-route-dom
+    * 需要設定根目錄 path='/' exact 
+    * route path='/path...' component
+* < Footer />
+* {< component />} 可以為tag寫邏輯
 
-### `yarn eject`
+```
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<Router>
+    <div className="container">
+        {/* <Header title='Hello' />  override default props.title */}
+        {/* <Header title={'Task Tracker'}/>  using PropTypes expected var type*/}
+        <Header onAdd={() => setShowAddTask(!showAddTask)} showAdd={showAddTask}/>
+        <Route path='/' exact render={ () =>
+            <>
+                {showAddTask && <AddTask onAdd={addTask} />}
+                {
+                    判斷式 > 0
+                        ? <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} />
+                        : 'NO Task'
+                }
+            </>
+        }/>
+        <Route path='/about' component={About}/>
+        <Footer />
+    </div>
+</Router>
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+##    Component 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+* const Component({props....}) = >{
+         return < attribute....> </>
+}
+```
+const component = ({ color, text, onClick }) => {
+    return <button
+        onClick={onClick}
+        style={{ background: color }}
+        className='btn' >
+        {text}
+    </button>
+}
+```
 
-## Learn More
+##    快速生成
+```
+rafce+Tab  == 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+import React from 'react'
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+const <fileName> = () => {
+    return (
+        <div>
+            
+        </div>
+    )
+}
 
-### Code Splitting
+export default <fileName>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
 
-### Analyzing the Bundle Size
+##    專案發佈
+* build folder 才是我們真正發佈的網站檔案
+* Google React plugin Icon 紅色 未建置 藍色 已建置
+```
+npm run build >> build folder 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
+// serve 套件是一個小型的伺服器 用來測試build專案
+sudo npm i -g serve
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+// 在 http://localhost:8000 上
+serve -s build -p 8000 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```
 
-### Deployment
+##    Json-server
+```
+npm i json-server
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `yarn build` fails to minify
+>> package.json>>"scripts":{}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-React framework practice
+"server": "json-server --watch db.json --port 5000"
+
+npm run server
+```
